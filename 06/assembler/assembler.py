@@ -1,4 +1,5 @@
 import string
+import re
 
 symbols = {
     'R0': 0,
@@ -33,6 +34,10 @@ class Parser():
         return list(map(self.__parse_line, lines))
 
     def __parse_line(self, line):
+        if self.__is_label(line):
+            # label
+            print('label')
+
         return line
 
     def __clear_lines(self, lines):
@@ -50,7 +55,7 @@ class Parser():
         return line[:comment_start_index]
 
     def __is_label(self, line):
-        pass
+        return re.match(r'\(([A-Z]|[a-z])*\)', line)
 
 
 class Assembler():
