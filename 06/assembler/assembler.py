@@ -55,7 +55,7 @@ class Parser():
         return line[:comment_start_index]
 
     def __is_label(self, line):
-        return re.match(r'\(([A-Z]|[a-z])*\)', line)
+        return re.match(r'\(.*\)', line)
 
 
 class Assembler():
