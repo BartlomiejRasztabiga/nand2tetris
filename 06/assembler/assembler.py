@@ -29,43 +29,54 @@ symbols = {
 
 class Parser():
     def parse(self, lines):
-        parsed = []
-        lines = self.clear_lines(lines)
+        lines = self.__clear_lines(lines)
+        return list(map(self.__parse_line, lines))
 
-        print(lines)
+    def __parse_line(self, line):
+        return line
 
-        return lines
+    def __clear_lines(self, lines):
+        return [x for x in map(self.__clear_line, lines) if x is not None]
 
-    def clear_lines(self, lines):
-        return [x for x in map(self.clear_line, lines) if x is not None]
-
-    def clear_line(self, line):
-        s = "".join(self.delete_comment(line).split())
+    def __clear_line(self, line):
+        s = "".join(self.__delete_comment(line).split())
         n = len(s)
         return s if n != 0 else None
 
-    def delete_comment(self, line):
+    def __delete_comment(self, line):
         comment_start_index = line.find('//')
         if comment_start_index == -1:
             return line
         return line[:comment_start_index]
 
-    def is_label(self, line):
+    def __is_label(self, line):
         pass
 
 
-def update_symbols(parser, lines):
-    parser.parse(lines)
+class Assembler():
+    def __init__(self, in_file, out_file):
+        self.in_file = in_file
+        self.out_file = out_file
+        self.parser = Parser()
+
+        with open(self.in_file, 'r') as file:
+            self.lines = list(map(lambda x: x.strip(), file.readlines()))
+
+    def assemble(self):
+        self.parsed_lines = self.parser.parse(self.lines)
+        print(self.parsed_lines)
+        # self.update_symbols()
+
+    def __update_symbols(self):
+        pass
 
 
 def main():
     in_file = 'in.asm'
     out_file = 'out.hack'
-    parser = Parser()
 
-    with open(in_file, 'r') as file:
-        lines = list(map(lambda x: x.strip(), file.readlines()))
-        update_symbols(parser, lines)
+    assembler = Assembler(in_file, out_file)
+    assembler.assemble()
 
 
 if __name__ == '__main__':
