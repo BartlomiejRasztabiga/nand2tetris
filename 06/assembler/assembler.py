@@ -28,17 +28,38 @@ symbols = {
 }
 
 
+class Label():
+    def __init__(self, label):
+        self.label = label
+
+
+class AInstruction():
+    def __init__(self, address):
+        self.address = address
+
+
+class CInstruction():
+    def __init__(self, comp, dest, jump):
+        self.comp = comp
+        self.dest = dest
+        self.jump = jump
+
+
 class Parser():
     def parse(self, lines):
         lines = self.__clear_lines(lines)
         return list(map(self.__parse_line, lines))
 
     def __parse_line(self, line):
+        parsed_line = None
         if self.__is_label(line):
-            # label
-            print('label')
+            parsed_line = Label(line[1:len(line)-1])
+        elif self.__is_A_instruction(line):
+            parsed_line = AInstruction(line[1:])
+        else:
+            parsed_line = self.__line_to_C_instruction(line)
 
-        return line
+        return parsed_line
 
     def __clear_lines(self, lines):
         return [x for x in map(self.__clear_line, lines) if x is not None]
@@ -56,6 +77,21 @@ class Parser():
 
     def __is_label(self, line):
         return re.match(r'\(.*\)', line)
+
+    def __is_A_instruction(self, line):
+        return line.startswith('@')
+
+    def __line_to_C_instruction(self, line):
+        equal_sign_index = line.find('=')
+        semicolon_sign_index = line.find(';')
+
+        dest = None if equal_sign_index == -1 else line[:equal_sign_index]
+        jump = None if semicolon_sign_index == - \
+            1 else line[semicolon_sign_index + 1:]
+        comp = line[0 if equal_sign_index == -1 else equal_sign_index +
+                    1: len(line) if semicolon_sign_index == -1 else semicolon_sign_index]
+
+        return CInstruction(comp, dest, jump)
 
 
 class Assembler():
