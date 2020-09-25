@@ -1,3 +1,4 @@
+import sys
 import string
 import re
 
@@ -113,8 +114,12 @@ class Assembler():
 
 
 def main():
-    in_file = 'in.asm'
-    out_file = 'out.hack'
+    if len(sys.argv) < 2:
+        print("No input file supplied")
+        return
+
+    in_file = sys.argv[1]        
+    out_file = in_file.replace('.asm', '.hack')
 
     assembler = Assembler(in_file, out_file)
     assembler.assemble()
