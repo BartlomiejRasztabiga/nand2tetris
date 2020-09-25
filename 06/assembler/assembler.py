@@ -30,7 +30,6 @@ class SymbolTable():
             'THIS': 3,
             'THAT': 4
         }
-        self.nextAvailableValue = 16
 
     def getSymbolValue(self, symbolName):
         if symbolName not in self.symbols:
@@ -40,8 +39,20 @@ class SymbolTable():
     def addSymbol(self, symbolName):
         if symbolName in self.symbols:
             return  # should throw exception
-        self.symbols[symbolName] = self.nextAvailableValue
-        self.nextAvailableValue += 1
+        self.symbols[symbolName] = self.__getNextAvailableValue()
+
+    def addSymbolWithValue(self, symbolName, value):
+        if symbolName in self.symbols:
+            return  # should throw exception
+        if value in self.symbols.values():
+            return # should not happen since line symbols are evaluated first
+        self.symbols[symbolName] = value
+
+    def __getNextAvailableValue(self):
+        n = 16
+        while n in self.symbols.values():
+            n += 1
+        return n
 
 
 class Label():
@@ -108,6 +119,7 @@ class Parser():
                     1: len(line) if semicolon_sign_index == -1 else semicolon_sign_index]
 
         return CInstruction(comp, dest, jump)
+
 
 class CodeConverter():
     def convertToBinary(self, line):
