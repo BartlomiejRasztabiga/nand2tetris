@@ -1,3 +1,4 @@
 *.out
 .vscode/
 06/assembler/in.asm
+__pycache__/
