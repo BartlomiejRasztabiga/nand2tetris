@@ -109,6 +109,11 @@ class Parser():
 
         return CInstruction(comp, dest, jump)
 
+class CodeConverter():
+    def convertToBinary(self, line):
+        print(type(line))
+        return line
+
 
 class Assembler():
     def __init__(self, in_file, out_file):
