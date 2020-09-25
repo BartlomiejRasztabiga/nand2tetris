@@ -32,24 +32,24 @@ class SymbolTable():
             'THAT': 4
         }
 
-    def getSymbolValue(self, symbolName):
+    def get_symbol_value(self, symbolName):
         if symbolName not in self.symbols:
             return None
         return self.symbols[symbolName]
 
-    def addSymbol(self, symbolName):
+    def add_symbol(self, symbolName):
         if symbolName in self.symbols:
             return  # should throw exception
-        self.symbols[symbolName] = self.__getNextAvailableValue()
+        self.symbols[symbolName] = self._get_next_available_value()
 
-    def addSymbolWithValue(self, symbolName, value):
+    def add_symbol_with_value(self, symbolName, value):
         if symbolName in self.symbols:
             return  # should throw exception
         if value in self.symbols.values():
             return  # should not happen since line symbols are evaluated first
         self.symbols[symbolName] = value
 
-    def __getNextAvailableValue(self):
+    def _get_next_available_value(self):
         n = 16
         while n in self.symbols.values():
             n += 1
@@ -96,41 +96,41 @@ class CInstruction():
 
 class Parser():
     def parse(self, lines):
-        lines = self.__clear_lines(lines)
-        return list(map(self.__parse_line, lines))
+        lines = self._clear_lines(lines)
+        return list(map(self._parse_line, lines))
 
-    def __parse_line(self, line):
+    def _parse_line(self, line):
         parsed_line = None
-        if self.__is_label(line):
+        if self._is_label(line):
             parsed_line = Label(line[1:len(line)-1])
-        elif self.__is_A_instruction(line):
+        elif self._is_A_instruction(line):
             parsed_line = AInstruction(line[1:])
         else:
-            parsed_line = self.__line_to_C_instruction(line)
+            parsed_line = self._line_to_C_instruction(line)
 
         return parsed_line
 
-    def __clear_lines(self, lines):
-        return [x for x in map(self.__clear_line, lines) if x is not None]
+    def _clear_lines(self, lines):
+        return [x for x in map(self._clear_line, lines) if x is not None]
 
-    def __clear_line(self, line):
-        s = "".join(self.__delete_comment(line).split())
+    def _clear_line(self, line):
+        s = "".join(self._delete_comment(line).split())
         n = len(s)
         return s if n != 0 else None
 
-    def __delete_comment(self, line):
+    def _delete_comment(self, line):
         comment_start_index = line.find('//')
         if comment_start_index == -1:
             return line
         return line[:comment_start_index]
 
-    def __is_label(self, line):
+    def _is_label(self, line):
         return re.match(r'\(.*\)', line)
 
-    def __is_A_instruction(self, line):
+    def _is_A_instruction(self, line):
         return line.startswith('@')
 
-    def __line_to_C_instruction(self, line):
+    def _line_to_C_instruction(self, line):
         equal_sign_index = line.find('=')
         semicolon_sign_index = line.find(';')
 
@@ -144,10 +144,10 @@ class Parser():
 
 
 class CodeConverter():
-    def convertInstructions(self, instructions):
-        return list(map(self.__convertInstruction, instructions))
+    def convert_instructions(self, instructions):
+        return list(map(self._convert_instruction, instructions))
 
-    def __convertInstruction(self, instruction):
+    def _convert_instruction(self, instruction):
         return instruction.to_binary()
 
 
@@ -160,7 +160,7 @@ class Assembler():
         self.parsed_instructions = self.parser.parse(lines)
         # print(self.parsed_lines)
         self.__update_symbols()
-        self.encoded_instructions = self.codeConverter.convertInstructions(
+        self.encoded_instructions = self.codeConverter.convert_instructions(
             self.parsed_instructions)
         # print(self.encoded_lines)
 

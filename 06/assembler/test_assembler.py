@@ -7,38 +7,38 @@ class TestSymbolTable(unittest.TestCase):
     def test_get_builtin_symbol(self):
         symbolTable = SymbolTable()
 
-        self.assertEqual(symbolTable.getSymbolValue('R0'), 0)
+        self.assertEqual(symbolTable.get_symbol_value('R0'), 0)
 
     def test_not_existing_symbol(self):
         symbolTable = SymbolTable()
 
-        self.assertEqual(symbolTable.getSymbolValue('none'), None)
+        self.assertEqual(symbolTable.get_symbol_value('none'), None)
 
     def test_add_new_symbols(self):
         symbolTable = SymbolTable()
-        symbolTable.addSymbol('first')
-        symbolTable.addSymbol('second')
+        symbolTable.add_symbol('first')
+        symbolTable.add_symbol('second')
 
-        self.assertEqual(symbolTable.getSymbolValue('first'), 16)
-        self.assertEqual(symbolTable.getSymbolValue('second'), 17)
+        self.assertEqual(symbolTable.get_symbol_value('first'), 16)
+        self.assertEqual(symbolTable.get_symbol_value('second'), 17)
 
     def test_add_new_symbols_with_values(self):
         symbolTable = SymbolTable()
-        symbolTable.addSymbolWithValue('first', 16)
-        symbolTable.addSymbolWithValue('second', 17)
+        symbolTable.add_symbol_with_value('first', 16)
+        symbolTable.add_symbol_with_value('second', 17)
 
-        self.assertEqual(symbolTable.getSymbolValue('first'), 16)
-        self.assertEqual(symbolTable.getSymbolValue('second'), 17)
+        self.assertEqual(symbolTable.get_symbol_value('first'), 16)
+        self.assertEqual(symbolTable.get_symbol_value('second'), 17)
 
     def test_symbols_collisions(self):
         symbolTable = SymbolTable()
-        symbolTable.addSymbolWithValue('first', 16)
-        symbolTable.addSymbolWithValue('second', 17)
-        symbolTable.addSymbol('third')
+        symbolTable.add_symbol_with_value('first', 16)
+        symbolTable.add_symbol_with_value('second', 17)
+        symbolTable.add_symbol('third')
 
-        self.assertEqual(symbolTable.getSymbolValue('first'), 16)
-        self.assertEqual(symbolTable.getSymbolValue('second'), 17)
-        self.assertEqual(symbolTable.getSymbolValue('third'), 18)
+        self.assertEqual(symbolTable.get_symbol_value('first'), 16)
+        self.assertEqual(symbolTable.get_symbol_value('second'), 17)
+        self.assertEqual(symbolTable.get_symbol_value('third'), 18)
 
 
 class TestParser(unittest.TestCase):
@@ -95,14 +95,14 @@ class TestCodeConverter(unittest.TestCase):
     def test_a_instruction_1(self):
         codeConverter = CodeConverter()
 
-        converted = codeConverter.convertInstructions([AInstruction('2')])
+        converted = codeConverter.convert_instructions([AInstruction('2')])
 
         self.assertEqual(converted, ['0000000000000010'])
 
     def test_c_instruction_1(self):
         codeConverter = CodeConverter()
 
-        converted = codeConverter.convertInstructions(
+        converted = codeConverter.convert_instructions(
             [CInstruction('A', 'D', None)])
 
         self.assertEqual(converted, ['1110110000010000'])
