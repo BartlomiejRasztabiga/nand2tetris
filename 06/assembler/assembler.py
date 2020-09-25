@@ -138,12 +138,11 @@ class CodeConverter():
 
 
 class Assembler():
-    def __init__(self, lines):
+    def __init__(self):
         self.parser = Parser()
-        self.lines = lines
 
-    def assemble(self):
-        self.parsed_lines = self.parser.parse(self.lines)
+    def assemble(self, lines):
+        self.parsed_lines = self.parser.parse(lines)
         # print(self.parsed_lines)
         # self.update_symbols()
         return list(map(lambda x: str(x) + os.linesep, self.parsed_lines))
@@ -162,8 +161,8 @@ class Main():
         with open(self.in_file, 'r') as file:
             lines = list(map(lambda x: x.strip(), file.readlines()))
 
-        self.assembler = Assembler(lines)
-        assembled_lines = self.assembler.assemble()
+        self.assembler = Assembler()
+        assembled_lines = self.assembler.assemble(lines)
 
         print(assembled_lines)
 
