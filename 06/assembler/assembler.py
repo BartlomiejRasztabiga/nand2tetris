@@ -64,6 +64,9 @@ class AInstruction():
     def __init__(self, address):
         self.address = address
 
+    def __eq__(self, other):
+        return self.address == other.address
+
 
 class CInstruction():
     def __init__(self, comp, dest, jump):

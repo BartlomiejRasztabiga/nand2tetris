@@ -1,5 +1,5 @@
 import unittest
-from assembler import SymbolTable
+from assembler import SymbolTable, Parser, AInstruction
 
 
 class TestSymbolTable(unittest.TestCase):
@@ -39,6 +39,16 @@ class TestSymbolTable(unittest.TestCase):
         self.assertEqual(symbolTable.getSymbolValue('first'), 16)
         self.assertEqual(symbolTable.getSymbolValue('second'), 17)
         self.assertEqual(symbolTable.getSymbolValue('third'), 18)
+
+
+class TestParser(unittest.TestCase):
+    def test_parse_lines1(self):
+        parser = Parser()
+        lines_to_parse = ['@R0']
+
+        parsed_lines = parser.parse(lines_to_parse)
+
+        self.assertEqual(parsed_lines, [AInstruction('R0')])
 
 
 if __name__ == '__main__':
