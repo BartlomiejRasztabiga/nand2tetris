@@ -139,7 +139,7 @@ class CodeConverter():
         if type(instruction) is AInstruction:
             return self.__convert_a_instruction(instruction)
         else:
-            return str(instruction)
+            return '0000000000000000'
 
     def __convert_a_instruction(self, instruction):
         try:
