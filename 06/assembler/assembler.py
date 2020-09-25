@@ -132,20 +132,27 @@ class Parser():
 
 
 class CodeConverter():
-    def convertToBinary(self, line):
-        print(type(line))
-        return line
+    def convertLines(self, lines):
+        return list(map(self.__convertLine, lines))
+
+    def __convertLine(self, line):
+        # print(type(line))
+        return str(line)
 
 
 class Assembler():
     def __init__(self):
         self.parser = Parser()
+        self.codeConverter = CodeConverter()
 
     def assemble(self, lines):
         self.parsed_lines = self.parser.parse(lines)
         # print(self.parsed_lines)
-        # self.update_symbols()
-        return list(map(lambda x: str(x) + os.linesep, self.parsed_lines))
+        self.__update_symbols()
+        self.encoded_lines = self.codeConverter.convertLines(self.parsed_lines)
+        # print(self.encoded_lines)
+
+        return list(map(lambda x: x + os.linesep, self.encoded_lines))
 
     def __update_symbols(self):
         pass
@@ -163,8 +170,6 @@ class Main():
 
         self.assembler = Assembler()
         assembled_lines = self.assembler.assemble(lines)
-
-        print(assembled_lines)
 
         # write assembled lines
         with open(self.out_file, 'w') as file:
