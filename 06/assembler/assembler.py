@@ -132,12 +132,23 @@ class Parser():
 
 
 class CodeConverter():
-    def convertLines(self, lines):
-        return list(map(self.__convertLine, lines))
+    def convertInstructions(self, instructions):
+        return list(map(self.__convertInstruction, instructions))
 
-    def __convertLine(self, line):
-        # print(type(line))
-        return str(line)
+    def __convertInstruction(self, instruction):
+        if type(instruction) is AInstruction:
+            return self.__convert_a_instruction(instruction)
+        else:
+            return str(instruction)
+
+    def __convert_a_instruction(self, instruction):
+        try:
+            converted = ('0' + bin(int(instruction.address))
+                         [2:]).rjust(16, '0')
+        except ValueError:
+            converted = str(instruction)
+            # should not happen, probably line contains a symbol
+        return converted
 
 
 class Assembler():
@@ -146,13 +157,14 @@ class Assembler():
         self.codeConverter = CodeConverter()
 
     def assemble(self, lines):
-        self.parsed_lines = self.parser.parse(lines)
+        self.parsed_instructions = self.parser.parse(lines)
         # print(self.parsed_lines)
         self.__update_symbols()
-        self.encoded_lines = self.codeConverter.convertLines(self.parsed_lines)
+        self.encoded_instructions = self.codeConverter.convertInstructions(
+            self.parsed_instructions)
         # print(self.encoded_lines)
 
-        return list(map(lambda x: x + os.linesep, self.encoded_lines))
+        return list(map(lambda x: x + os.linesep, self.encoded_instructions))
 
     def __update_symbols(self):
         pass

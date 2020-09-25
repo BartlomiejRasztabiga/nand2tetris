@@ -1,5 +1,5 @@
 import unittest
-from assembler import SymbolTable, Parser, AInstruction, CInstruction, Label, Assembler
+from assembler import SymbolTable, Parser, AInstruction, CInstruction, Label, Assembler, CodeConverter
 
 
 class TestSymbolTable(unittest.TestCase):
@@ -42,13 +42,21 @@ class TestSymbolTable(unittest.TestCase):
 
 
 class TestParser(unittest.TestCase):
-    def test_parse_lines_a_instruction(self):
+    def test_parse_lines_a_instruction1(self):
         parser = Parser()
         lines_to_parse = ['@R0']
 
         parsed_lines = parser.parse(lines_to_parse)
 
         self.assertEqual(parsed_lines, [AInstruction('R0')])
+
+    def test_parse_lines_a_instruction2(self):
+        parser = Parser()
+        lines_to_parse = ['@2']
+
+        parsed_lines = parser.parse(lines_to_parse)
+
+        self.assertEqual(parsed_lines, [AInstruction('2')])
 
     def test_parse_lines_c_instruction1(self):
         parser = Parser()
@@ -83,6 +91,15 @@ class TestParser(unittest.TestCase):
         self.assertEqual(parsed_lines, [Label('LABEL')])
 
 
+class TestCodeConverter(unittest.TestCase):
+    def test_a_instruction_1(self):
+        codeConverter = CodeConverter()
+
+        converted = codeConverter.convertInstructions([AInstruction('2')])
+
+        self.assertEqual(converted, ['0000000000000010'])
+
+
 class TestAssembler(unittest.TestCase):
     def test_assembler1(self):
         assembler = Assembler()
@@ -107,9 +124,9 @@ class TestAssembler(unittest.TestCase):
         #                                 '@INFINITE_LOOP',
         #                                 '0;JMP            // infinite loop'])
 
-        assembled = assembler.assemble(['@R0'])
+        # assembled = assembler.assemble(['@R0'])
 
-        self.assertEqual(assembled, '')
+        # self.assertEqual(assembled, '')
 
 
 if __name__ == '__main__':
