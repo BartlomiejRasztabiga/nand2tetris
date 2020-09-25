@@ -1,6 +1,7 @@
 *.out
 .vscode/
 06/assembler/in.asm
+06/assembler/in.hack
 __pycache__/
 .coverage
 htmlcov

@@ -1,3 +1,4 @@
+import os
 import sys
 import string
 import re
@@ -137,21 +138,38 @@ class CodeConverter():
 
 
 class Assembler():
-    def __init__(self, in_file, out_file):
-        self.in_file = in_file
-        self.out_file = out_file
+    def __init__(self, lines):
         self.parser = Parser()
-
-        with open(self.in_file, 'r') as file:
-            self.lines = list(map(lambda x: x.strip(), file.readlines()))
+        self.lines = lines
 
     def assemble(self):
         self.parsed_lines = self.parser.parse(self.lines)
-        print(self.parsed_lines)
+        # print(self.parsed_lines)
         # self.update_symbols()
+        return list(map(lambda x: str(x) + os.linesep, self.parsed_lines))
 
     def __update_symbols(self):
         pass
+
+
+class Main():
+    def __init__(self, in_file, out_file):
+        self.in_file = in_file
+        self.out_file = out_file
+
+    def run(self):
+        # read raw lines
+        with open(self.in_file, 'r') as file:
+            lines = list(map(lambda x: x.strip(), file.readlines()))
+
+        self.assembler = Assembler(lines)
+        assembled_lines = self.assembler.assemble()
+
+        print(assembled_lines)
+
+        # write assembled lines
+        with open(self.out_file, 'w') as file:
+            file.writelines(assembled_lines)
 
 
 def main():
@@ -162,8 +180,7 @@ def main():
     in_file = sys.argv[1]
     out_file = in_file.replace('.asm', '.hack')
 
-    assembler = Assembler(in_file, out_file)
-    assembler.assemble()
+    Main(in_file, out_file).run()
 
 
 if __name__ == '__main__':
