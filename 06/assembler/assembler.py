@@ -45,7 +45,7 @@ class SymbolTable():
         if symbolName in self.symbols:
             return  # should throw exception
         if value in self.symbols.values():
-            return # should not happen since line symbols are evaluated first
+            return  # should not happen since line symbols are evaluated first
         self.symbols[symbolName] = value
 
     def __getNextAvailableValue(self):
@@ -73,6 +73,9 @@ class CInstruction():
         self.comp = comp
         self.dest = dest
         self.jump = jump
+
+    def __eq__(self, other):
+        return self.comp == other.comp and self.dest == other.dest and self.jump == other.jump
 
 
 class Parser():
