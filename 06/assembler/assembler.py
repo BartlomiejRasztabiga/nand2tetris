@@ -146,7 +146,7 @@ class CodeConverter():
             converted = ('0' + bin(int(instruction.address))
                          [2:]).rjust(16, '0')
         except ValueError:
-            converted = str(instruction)
+            converted = '0000000000000000'
             # should not happen, probably line contains a symbol
         return converted
 

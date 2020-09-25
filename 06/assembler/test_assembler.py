@@ -99,6 +99,14 @@ class TestCodeConverter(unittest.TestCase):
 
         self.assertEqual(converted, ['0000000000000010'])
 
+    def test_c_instruction_1(self):
+        codeConverter = CodeConverter()
+
+        converted = codeConverter.convertInstructions(
+            [CInstruction('A', 'D', None)])
+
+        self.assertEqual(converted, ['1110110000010000'])
+
 
 class TestAssembler(unittest.TestCase):
     def test_assembler1(self):
