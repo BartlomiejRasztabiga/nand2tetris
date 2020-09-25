@@ -59,6 +59,9 @@ class Label():
     def __init__(self, label):
         self.label = label
 
+    def __eq__(self, other):
+        return self.label == other.label
+
 
 class AInstruction():
     def __init__(self, address):

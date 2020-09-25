@@ -2,3 +2,5 @@
 .vscode/
 06/assembler/in.asm
 __pycache__/
+.coverage
+htmlcov
