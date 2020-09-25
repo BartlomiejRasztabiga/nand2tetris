@@ -71,6 +71,15 @@ class AInstruction():
     def __eq__(self, other):
         return self.address == other.address
 
+    def to_binary(self):
+        try:
+            converted = ('0' + bin(int(self.address))
+                         [2:]).rjust(16, '0')
+        except ValueError:
+            converted = '0000000000000000'
+            # should not happen, probably line contains a symbol
+        return converted
+
 
 class CInstruction():
     def __init__(self, comp, dest, jump):
@@ -80,6 +89,9 @@ class CInstruction():
 
     def __eq__(self, other):
         return self.comp == other.comp and self.dest == other.dest and self.jump == other.jump
+
+    def to_binary(self):
+        return '0' * 16
 
 
 class Parser():
@@ -136,19 +148,7 @@ class CodeConverter():
         return list(map(self.__convertInstruction, instructions))
 
     def __convertInstruction(self, instruction):
-        if type(instruction) is AInstruction:
-            return self.__convert_a_instruction(instruction)
-        else:
-            return '0000000000000000'
-
-    def __convert_a_instruction(self, instruction):
-        try:
-            converted = ('0' + bin(int(instruction.address))
-                         [2:]).rjust(16, '0')
-        except ValueError:
-            converted = '0000000000000000'
-            # should not happen, probably line contains a symbol
-        return converted
+        return instruction.to_binary()
 
 
 class Assembler():
