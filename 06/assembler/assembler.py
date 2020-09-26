@@ -31,6 +31,7 @@ class SymbolTable():
             'THIS': 3,
             'THAT': 4
         }
+        self.n = 16
 
     def get_symbol_value(self, symbolName):
         if symbolName not in self.symbols:
@@ -49,10 +50,8 @@ class SymbolTable():
         self.symbols[symbolName] = value
 
     def _get_next_available_value(self):
-        n = 16
-        while n in self.symbols.values():
-            n += 1
-        return n
+        self.n += 1
+        return self.n - 1
 
 
 class Label():
