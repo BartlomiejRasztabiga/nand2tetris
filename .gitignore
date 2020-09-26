@@ -2,6 +2,7 @@
 .vscode/
 06/assembler/in.asm
 06/assembler/in.hack
+06/**/*.hack
 __pycache__/
 .coverage
 htmlcov
