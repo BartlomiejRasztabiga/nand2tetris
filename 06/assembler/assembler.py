@@ -45,8 +45,7 @@ class SymbolTable():
     def add_symbol_with_value(self, symbolName, value):
         if symbolName in self.symbols:
             return  # should throw exception
-        if value in self.symbols.values():
-            return  # should not happen since line symbols are evaluated first
+        
         self.symbols[symbolName] = value
 
     def _get_next_available_value(self):
@@ -86,7 +85,7 @@ class CInstruction():
         return self.comp == other.comp and self.dest == other.dest and self.jump == other.jump
 
     def to_binary(self):
-        
+
         return '111' + self._comp_to_binary() + self._dest_to_binary() + self._jump_to_binary()
 
     def _comp_to_binary(self):
@@ -246,19 +245,45 @@ class Assembler():
     def __init__(self):
         self.parser = Parser()
         self.codeConverter = CodeConverter()
+        self.symbolTable = SymbolTable()
 
     def assemble(self, lines):
-        self.parsed_instructions = self.parser.parse(lines)
-        # print(self.parsed_lines)
-        self.__update_symbols()
-        self.encoded_instructions = self.codeConverter.convert_instructions(
-            self.parsed_instructions)
-        # print(self.encoded_lines)
+        parsed_instructions = self.parser.parse(lines)
+        parsed_instructions = self.__update_symbols(parsed_instructions)
+        encoded_instructions = self.codeConverter.convert_instructions(
+            parsed_instructions)
 
-        return list(map(lambda x: x + os.linesep, self.encoded_instructions))
+        return list(map(lambda x: x + os.linesep, encoded_instructions))
 
-    def __update_symbols(self):
-        pass
+    def __update_symbols(self, parsed_instructions):
+        instructions_without_labels = []
+
+        # process labels
+        current_line_number = 0
+        for instruction in parsed_instructions:
+            if type(instruction) is Label:
+                self.symbolTable.add_symbol_with_value(
+                    instruction.label, current_line_number)
+            else:
+                current_line_number += 1
+                instructions_without_labels.append(instruction)
+
+        # process symbols (jumps and variables)
+        for instruction in instructions_without_labels:
+            if type(instruction) is AInstruction:
+                if not instruction.address.isnumeric():
+                    # replace symbol with value
+                    value = self.symbolTable.get_symbol_value(
+                        instruction.address)
+                    if value is None:
+                        # allocate new symbol
+                        self.symbolTable.add_symbol(instruction.address)
+                        value = self.symbolTable.get_symbol_value(
+                            instruction.address)
+
+                    instruction.address = value
+
+        return instructions_without_labels
 
 
 class Main():
