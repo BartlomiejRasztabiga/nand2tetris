@@ -72,13 +72,8 @@ class AInstruction():
         return self.address == other.address
 
     def to_binary(self):
-        try:
-            converted = ('0' + bin(int(self.address))
-                         [2:]).rjust(16, '0')
-        except ValueError:
-            converted = '0000000000000000'
-            # should not happen, probably line contains a symbol
-        return converted
+        return ('0' + bin(int(self.address))
+                [2:]).rjust(16, '0')
 
 
 class CInstruction():
@@ -91,7 +86,103 @@ class CInstruction():
         return self.comp == other.comp and self.dest == other.dest and self.jump == other.jump
 
     def to_binary(self):
-        return '0' * 16
+        
+        return '111' + self._comp_to_binary() + self._dest_to_binary() + self._jump_to_binary()
+
+    def _comp_to_binary(self):
+        if self.comp == '0':
+            return '0101010'
+        elif self.comp == '1':
+            return '0111111'
+        elif self.comp == '-1':
+            return '0111010'
+        elif self.comp == 'D':
+            return '0001100'
+        elif self.comp == 'A':
+            return '0110000'
+        elif self.comp == 'M':
+            return '1110000'
+        elif self.comp == '!D':
+            return '0001101'
+        elif self.comp == '!A':
+            return '0110001'
+        elif self.comp == '!M':
+            return '1110001'
+        elif self.comp == '-D':
+            return '0001111'
+        elif self.comp == '-A':
+            return '0110011'
+        elif self.comp == '-M':
+            return '1110011'
+        elif self.comp == 'D+1':
+            return '0011111'
+        elif self.comp == 'A+1':
+            return '0110111'
+        elif self.comp == 'M+1':
+            return '1110111'
+        elif self.comp == 'D-1':
+            return '0001110'
+        elif self.comp == 'A-1':
+            return '0110010'
+        elif self.comp == 'M-1':
+            return '1110010'
+        elif self.comp == 'D+A':
+            return '0000010'
+        elif self.comp == 'D+M':
+            return '1000010'
+        elif self.comp == 'D-A':
+            return '0010011'
+        elif self.comp == 'D-M':
+            return '1010011'
+        elif self.comp == 'A-D':
+            return '0000111'
+        elif self.comp == 'M-D':
+            return '1000111'
+        elif self.comp == 'D&A':
+            return '0000000'
+        elif self.comp == 'D&M':
+            return '1000000'
+        elif self.comp == 'D|A':
+            return '0010101'
+        elif self.comp == 'D|M':
+            return '1010101'
+        else:
+            return '0000000'
+
+    def _dest_to_binary(self):
+        if self.dest == 'M':
+            return '001'
+        elif self.dest == 'D':
+            return '010'
+        elif self.dest == 'MD':
+            return '011'
+        elif self.dest == 'A':
+            return '100'
+        elif self.dest == 'AM':
+            return '101'
+        elif self.dest == 'AD':
+            return '110'
+        elif self.dest == 'AMD':
+            return '111'
+        else:
+            return '000'
+
+    def _jump_to_binary(self):
+        if self.jump == 'JGT':
+            return '001'
+        elif self.jump == 'JEQ':
+            return '010'
+        elif self.jump == 'JGE':
+            return '011'
+        elif self.jump == 'JLT':
+            return '100'
+        elif self.jump == 'JNE':
+            return '101'
+        elif self.jump == 'JLE':
+            return '110'
+        elif self.jump == 'JMP':
+            return '111'
+        return '000'
 
 
 class Parser():

@@ -107,6 +107,14 @@ class TestCodeConverter(unittest.TestCase):
 
         self.assertEqual(converted, ['1110110000010000'])
 
+    def test_c_instruction_2(self):
+        codeConverter = CodeConverter()
+
+        converted = codeConverter.convert_instructions(
+            [CInstruction('0', None, 'JMP')])
+
+        self.assertEqual(converted, ['1110101010000111'])
+
 
 if __name__ == '__main__':
     unittest.main()
