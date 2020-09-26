@@ -108,34 +108,5 @@ class TestCodeConverter(unittest.TestCase):
         self.assertEqual(converted, ['1110110000010000'])
 
 
-class TestAssembler(unittest.TestCase):
-    def test_assembler1(self):
-        assembler = Assembler()
-
-        # assembled = assembler.assemble(['@R0',
-        #                                 'D=M              // D = first number',
-        #                                 '@R1',
-        #                                 'D=D-M            // D = first number - second number',
-        #                                 '@OUTPUT_FIRST',
-        #                                 'D;JGT            // if D>0 (first is greater) goto output_first',
-        #                                 '@R1',
-        #                                 'D=M              // D = second number',
-        #                                 '@OUTPUT_D',
-        #                                 '0;JMP            // goto output_d',
-        #                                 '(OUTPUT_FIRST)',
-        #                                 '@R0',
-        #                                 'D=M              // D = first number',
-        #                                 '(OUTPUT_D)',
-        #                                 '@R2',
-        #                                 'M=D              // M[2] = D (greatest number)',
-        #                                 '(INFINITE_LOOP)',
-        #                                 '@INFINITE_LOOP',
-        #                                 '0;JMP            // infinite loop'])
-
-        # assembled = assembler.assemble(['@R0'])
-
-        # self.assertEqual(assembled, '')
-
-
 if __name__ == '__main__':
     unittest.main()
