@@ -12,7 +12,7 @@ class Parser():
     def _parse_line(self, line):
         parsed_line = None
 
-        return parsed_line
+        return 'test'
 
     def _clear_lines(self, lines):
         return [x for x in map(self._clear_line, lines) if x is not None]
@@ -30,14 +30,14 @@ class Parser():
 
 
 class CodeTranslator():
-    def convert_instructions(self, instructions):
-        converted_instructions = []
+    def translate(self, instructions):
+        translated_instructions = []
         for instruction in instructions:
-            converted_instructions.append(self._convert_instruction(instruction))
+            translated_instructions += self._translate_instruction(instruction)
 
-        return converted_instructions
+        return translated_instructions
 
-    def _convert_instruction(self, instruction):
+    def _translate_instruction(self, instruction):
         return []
 
 
@@ -47,11 +47,11 @@ class VMTranslator():
         self.codeTranslator = CodeTranslator()
 
     def translate(self, lines):
-        parsed_instructions = self.parser.parse(lines)
-        encoded_instructions = self.codeTranslator.convert_instructions(
-            parsed_instructions)
+        instructions = self.parser.parse(lines)
+        translated_instructions = self.codeTranslator.translate(instructions)
+        print(translated_instructions)
 
-        return list(map(lambda x: x + os.linesep, encoded_instructions))
+        return list(map(lambda x: x + os.linesep, translated_instructions))
 
 
 class Main():
@@ -78,7 +78,7 @@ def main():
         return
 
     in_file = sys.argv[1]
-    out_file = in_file.replace('.asm', '.hack')
+    out_file = in_file.replace('.vm', '.asm')
 
     Main(in_file, out_file).run()
 
