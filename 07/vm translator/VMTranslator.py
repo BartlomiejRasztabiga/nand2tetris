@@ -4,6 +4,53 @@ import string
 import re
 
 
+class ArithmeticCommand():
+    def __init__(self, command_type):
+        self.command_type = command_type
+
+
+class PushCommand():
+    def __init__(self, segment, index):
+        self.segment = segment
+        self.index = index
+
+
+class PopCommand():
+    def __init__(self, segment, index):
+        self.segment = segment
+        self.index = index
+
+
+class LabelCommand():
+    def __init__(self, label):
+        self.label = label
+
+
+class GoToCommand():
+    def __init__(self):
+        pass
+
+
+class IfCommand():
+    def __init__(self):
+        pass
+
+
+class FunctionCommand():
+    def __init__(self):
+        pass
+
+
+class ReturnCommand():
+    def __init__(self):
+        pass
+
+
+class CallCommand():
+    def __init__(self):
+        pass
+
+
 class Parser():
     def parse(self, lines):
         lines = self._clear_lines(lines)
@@ -11,14 +58,19 @@ class Parser():
 
     def _parse_line(self, line):
         parsed_line = None
+        components = line.split()
 
-        return 'test'
+        if components[0] == 'push':
+            parsed_line = PushCommand(components[1], int(components[2]))
+
+        return parsed_line
 
     def _clear_lines(self, lines):
         return [x for x in map(self._clear_line, lines) if x is not None]
 
     def _clear_line(self, line):
-        s = "".join(self._delete_comment(line).split())
+        # s = "".join(self._delete_comment(line).split())
+        s = self._delete_comment(line)
         n = len(s)
         return s if n != 0 else None
 
@@ -48,8 +100,9 @@ class VMTranslator():
 
     def translate(self, lines):
         instructions = self.parser.parse(lines)
+
+        print(instructions)
         translated_instructions = self.codeTranslator.translate(instructions)
-        print(translated_instructions)
 
         return list(map(lambda x: x + os.linesep, translated_instructions))
 
