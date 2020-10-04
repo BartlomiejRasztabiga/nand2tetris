@@ -8,11 +8,37 @@ class ArithmeticCommand():
     def __init__(self, command_type):
         self.command_type = command_type
 
+    def to_assembly(self):
+        lines = []
+
+        if self.command_type == 'add':
+            lines.append()
+
+        return lines
+
 
 class PushCommand():
     def __init__(self, segment, index):
         self.segment = segment
         self.index = index
+
+    def to_assembly(self):
+        lines = []
+        if self.segment == 'constant':
+            # get constant to D register
+            lines.append('@' + self.index)
+            lines.append('D=A')
+
+        # push value to stack
+        lines.append('@SP')
+        lines.append('A=M')
+        lines.append('M=D')
+
+        # increment stack pointer
+        lines.append('@SP')
+        lines.append('M=M+1')
+
+        return lines
 
 
 class PopCommand():
@@ -61,7 +87,7 @@ class Parser():
         components = line.split()
 
         if components[0] == 'push':
-            parsed_line = PushCommand(components[1], int(components[2]))
+            parsed_line = PushCommand(components[1], components[2])
 
         return parsed_line
 
@@ -90,7 +116,7 @@ class CodeTranslator():
         return translated_instructions
 
     def _translate_instruction(self, instruction):
-        return []
+        return instruction.to_assembly() if instruction is not None else []
 
 
 class VMTranslator():
