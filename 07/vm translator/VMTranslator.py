@@ -12,7 +12,18 @@ class ArithmeticCommand():
         lines = []
 
         if self.command_type == 'add':
-            lines.append()
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=A+D')
+            lines.append('@SP')
+            lines.append('A=M')
+            lines.append('M=D')
+            lines.append('@SP')
+            lines.append('M=M+1')
 
         return lines
 
@@ -88,6 +99,8 @@ class Parser():
 
         if components[0] == 'push':
             parsed_line = PushCommand(components[1], components[2])
+        elif components[0] == 'add':
+            parsed_line = ArithmeticCommand('add')
 
         return parsed_line
 
