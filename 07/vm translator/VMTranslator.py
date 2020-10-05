@@ -16,6 +16,14 @@ def increment_and_push():
     return lines
 
 
+def decrement_and_pop():
+    lines = []
+    lines.append('@SP')
+    lines.append('AM=M-1')
+    lines.append('D=M')
+    return lines
+
+
 def label_for_type(tpe):
     if tpe == 'local':
         return 'LCL'
@@ -89,6 +97,35 @@ class PopCommand():
     def __init__(self, segment, index):
         self.segment = segment
         self.index = index
+
+    def to_assembly(self):
+        lines = []
+
+        if self.segment == 'temp':
+            lines += decrement_and_pop()
+            lines.append('@' + str(self.index + 5))
+            lines.append('M=D')
+        elif self.segment == 'static':
+            lines += decrement_and_pop()
+            lines.append('@' + file_name + '.' + self.index)
+            lines.append('M=D')
+        elif self.segment == 'pointer':
+            lines += decrement_and_pop()
+            lines.append('@' + str(self.index + 3))
+            lines.append('M=D')
+        elif self.segment in ['local', 'argument', 'this', 'that']:
+            lines.append('@' + self.index)
+            lines.append('D=A')
+            lines.append('@' + label_for_type(self.segment))
+            lines.append('D=M+D')
+            lines.append('@R13')
+            lines.append('M=D')
+            lines += decrement_and_pop()
+            lines.append('@R13')
+            lines.append('A=M')
+            lines.append('M=D')
+
+        return lines
 
 
 class LabelCommand():
