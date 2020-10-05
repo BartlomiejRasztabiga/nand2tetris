@@ -335,7 +335,7 @@ class Main():
 
     def run(self):
         global file_name
-        file_name = self.in_file.replace('.vm', '')
+        file_name = os.path.basename(os.path.normpath(self.in_file)).replace('.vm', '')
 
         # read raw lines
         with open(self.in_file, 'r') as file:
