@@ -3,6 +3,29 @@ import sys
 import string
 import re
 
+file_name = None
+
+
+def increment_and_push():
+    lines = []
+    lines.append('@SP')
+    lines.append('A=M')
+    lines.append('M=D')
+    lines.append('@SP')
+    lines.append('M=M+1')
+    return lines
+
+
+def label_for_type(tpe):
+    if tpe == 'local':
+        return 'LCL'
+    elif tpe == 'argument':
+        return 'ARG'
+    elif tpe == 'this':
+        return 'THIS'
+    elif tpe == 'that':
+        return 'THAT'
+
 
 class ArithmeticCommand():
     def __init__(self, command_type):
@@ -37,19 +60,27 @@ class PushCommand():
 
     def to_assembly(self):
         lines = []
+
         if self.segment == 'constant':
-            # get constant to D register
             lines.append('@' + self.index)
             lines.append('D=A')
+        elif self.segment == 'temp':
+            lines.append('@R' + str(self.index + 5))
+            lines.append('D=M')
+        elif self.segment == 'static':
+            lines.append('@' + file_name + '.' + self.index)
+            lines.append('D=M')
+        elif self.segment == 'pointer':
+            lines.append('@R' + str(self.index + 3))
+            lines.append('D=M')
+        elif self.segment in ['local', 'argument', 'this', 'that']:
+            lines.append('@' + self.index)
+            lines.append('D=A')
+            lines.append('@' + label_for_type(self.segment))
+            lines.append('A=M+D')
+            lines.append('D=M')
 
-        # push value to stack
-        lines.append('@SP')
-        lines.append('A=M')
-        lines.append('M=D')
-
-        # increment stack pointer
-        lines.append('@SP')
-        lines.append('M=M+1')
+        lines += increment_and_push()
 
         return lines
 
@@ -165,6 +196,9 @@ class Main():
         self.out_file = out_file
 
     def run(self):
+        global file_name
+        file_name = self.in_file.replace('.vm', '')
+
         # read raw lines
         with open(self.in_file, 'r') as file:
             lines = list(map(lambda x: x.strip(), file.readlines()))
