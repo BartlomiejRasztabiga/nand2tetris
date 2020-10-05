@@ -4,6 +4,7 @@ import string
 import re
 
 file_name = None
+next_label_num = 0
 
 
 def increment_and_push():
@@ -35,6 +36,12 @@ def label_for_type(tpe):
         return 'THAT'
 
 
+def next_label(note):
+    global next_label_num
+    next_label_num += 1
+    return note + next_label_num
+
+
 class ArithmeticCommand():
     def __init__(self, command_type):
         self.command_type = command_type
@@ -50,13 +57,105 @@ class ArithmeticCommand():
             lines.append('AM=M-1')
             lines.append('A=M')
             lines.append('D=A+D')
+            lines += increment_and_push()
+        elif self.command_type == 'sub':
             lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
             lines.append('A=M')
-            lines.append('M=D')
-            lines.append('@SP')
-            lines.append('M=M+1')
+            lines.append('D=A-D')
+            lines += increment_and_push()
+        elif self.command_type == 'eq':
+            true_lbl = next_label('TRUE')
+            end_lbl = next_label('END')
 
-        # https://github.com/SeaRbSg/nand2tetris/blob/master/stim371/07/vm_code_writer.rb
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=A-D')
+            lines.append('@' + true_lbl)
+            lines.append('D;JEQ')
+            lines.append('D=0')
+            lines += increment_and_push()
+            lines.append('@' + end_lbl)
+            lines.append('0;JMP')
+            lines.append('(' + true_lbl + ')')
+            lines.append('D=-1')
+            lines += increment_and_push()
+            lines.append('(' + end_lbl + ')')
+        elif self.command_type == 'lt':
+            true_lbl = next_label('TRUE')
+            end_lbl = next_label('END')
+
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=A-D')
+            lines.append('@' + true_lbl)
+            lines.append('D;JLT')
+            lines.append('D=0')
+            lines += increment_and_push()
+            lines.append('@' + end_lbl)
+            lines.append('0;JMP')
+            lines.append('(' + true_lbl + ')')
+            lines.append('D=-1')
+            lines += increment_and_push()
+            lines.append('(' + end_lbl + ')')
+        elif self.command_type == 'gt':
+            true_lbl = next_label('TRUE')
+            end_lbl = next_label('END')
+
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=A-D')
+            lines.append('@' + true_lbl)
+            lines.append('D;JGT')
+            lines.append('D=0')
+            lines += increment_and_push()
+            lines.append('@' + end_lbl)
+            lines.append('0;JMP')
+            lines.append('(' + true_lbl + ')')
+            lines.append('D=-1')
+            lines += increment_and_push()
+            lines.append('(' + end_lbl + ')')
+        elif self.command_type == 'and':
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=D&A')
+            lines += increment_and_push()
+        elif self.command_type == 'or':
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('D=M')
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('A=M')
+            lines.append('D=D|A')
+            lines += increment_and_push()
+        elif self.command_type == 'neg':
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('M=-M')
+        elif self.command_type == 'not':
+            lines.append('@SP')
+            lines.append('AM=M-1')
+            lines.append('M=!M')
 
         return lines
 
