@@ -25,6 +25,8 @@ class ArithmeticCommand():
             lines.append('@SP')
             lines.append('M=M+1')
 
+        # https://github.com/SeaRbSg/nand2tetris/blob/master/stim371/07/vm_code_writer.rb
+
         return lines
 
 
@@ -95,12 +97,24 @@ class Parser():
 
     def _parse_line(self, line):
         parsed_line = None
-        components = line.split()
 
-        if components[0] == 'push':
-            parsed_line = PushCommand(components[1], components[2])
-        elif components[0] == 'add':
-            parsed_line = ArithmeticCommand('add')
+        components = line.split()
+        cmd = components[0]
+        arg1 = components[1]
+        arg2 = components[2]
+
+        if cmd == 'push':
+            parsed_line = PushCommand(arg1, arg2)
+        elif cmd in ['add', 'sub', 'neg', 'eq', 'gt', 'lt', 'and', 'or', 'not']:
+            parsed_line = ArithmeticCommand(cmd)
+        elif cmd == 'pop':
+            parsed_line = PopCommand(arg1, arg2)
+        elif cmd == 'label':
+            parsed_line = LabelCommand(arg1)
+        elif cmd == 'goto':
+            parsed_line = GoToCommand()
+        elif cmd == 'if-goto':
+            parsed_line = IfCommand()
 
         return parsed_line
 
@@ -108,7 +122,6 @@ class Parser():
         return [x for x in map(self._clear_line, lines) if x is not None]
 
     def _clear_line(self, line):
-        # s = "".join(self._delete_comment(line).split())
         s = self._delete_comment(line)
         n = len(s)
         return s if n != 0 else None
