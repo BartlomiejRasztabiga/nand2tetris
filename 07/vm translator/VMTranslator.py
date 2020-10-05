@@ -39,7 +39,7 @@ def label_for_type(tpe):
 def next_label(note):
     global next_label_num
     next_label_num += 1
-    return note + next_label_num
+    return note + str(next_label_num)
 
 
 class ArithmeticCommand():
