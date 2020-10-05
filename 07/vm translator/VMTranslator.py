@@ -172,13 +172,13 @@ class PushCommand():
             lines.append('@' + self.index)
             lines.append('D=A')
         elif self.segment == 'temp':
-            lines.append('@R' + str(self.index + 5))
+            lines.append('@R' + str(int(self.index) + 5))
             lines.append('D=M')
         elif self.segment == 'static':
             lines.append('@' + file_name + '.' + self.index)
             lines.append('D=M')
         elif self.segment == 'pointer':
-            lines.append('@R' + str(self.index + 3))
+            lines.append('@R' + str(int(self.index) + 3))
             lines.append('D=M')
         elif self.segment in ['local', 'argument', 'this', 'that']:
             lines.append('@' + self.index)
@@ -202,7 +202,7 @@ class PopCommand():
 
         if self.segment == 'temp':
             lines += decrement_and_pop()
-            lines.append('@' + str(self.index + 5))
+            lines.append('@' + str(int(self.index) + 5))
             lines.append('M=D')
         elif self.segment == 'static':
             lines += decrement_and_pop()
@@ -210,7 +210,7 @@ class PopCommand():
             lines.append('M=D')
         elif self.segment == 'pointer':
             lines += decrement_and_pop()
-            lines.append('@' + str(self.index + 3))
+            lines.append('@' + str(int(self.index) + 3))
             lines.append('M=D')
         elif self.segment in ['local', 'argument', 'this', 'that']:
             lines.append('@' + self.index)
@@ -266,9 +266,12 @@ class Parser():
         parsed_line = None
 
         components = line.split()
+        n = len(components)
+
         cmd = components[0]
-        arg1 = components[1]
-        arg2 = components[2]
+
+        arg1 = components[1] if n >= 2 else None
+        arg2 = components[2] if n >= 3 else None
 
         if cmd == 'push':
             parsed_line = PushCommand(arg1, arg2)
@@ -320,7 +323,6 @@ class VMTranslator():
     def translate(self, lines):
         instructions = self.parser.parse(lines)
 
-        print(instructions)
         translated_instructions = self.codeTranslator.translate(instructions)
 
         return list(map(lambda x: x + os.linesep, translated_instructions))
